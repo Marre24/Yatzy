@@ -24,6 +24,7 @@ namespace Yatzy
         }
         public void CanvasSetUp(Form form, List<Player> players, Table table)
         {
+
             sortedPlayerList = table.SortedPlayerList;
             foreach (Player player in players)
             {
@@ -138,7 +139,7 @@ namespace Yatzy
                 {
                     Size = new Size(100,100),
                     Location = new Point(225 + 216 * ps.Count - 1, 500),
-                    Text = "Kasta tärning"
+                    Text = "Kasta de markerade tärningarna"
                 };
                 btn.Click += ThrowDieEvent;
                 form.Controls.Add(btn);
@@ -147,11 +148,11 @@ namespace Yatzy
 
         public void ThrowDieEvent(object sender, EventArgs e)
         {
-            
-            .ThrowDiesFor(6, throwDiePlayer);
-            for (int i = 0; i < throwDiePlayer.savedDice.Count; i++)
+            Player activePlayer = sortedPlayerList[0];
+            new Player().ThrowDiesFor(6, activePlayer);
+            for (int i = 0; i < activePlayer.savedDice.Count; i++)
             {
-                SetPictureForDie(i, throwDiePlayer.savedDice[i]);
+                SetPictureForDie(i, activePlayer.savedDice[i]);
             }
         }
 

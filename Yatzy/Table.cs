@@ -13,7 +13,7 @@ namespace Yatzy
         private List<Player> sortedPlayerList = new List<Player>();
         readonly Canvas canvas = new Canvas();
 
-        public List<Player> SortedPlayerList {get; set;}
+        public List<Player> SortedPlayerList { get { return sortedPlayerList; } set { sortedPlayerList = SortedPlayerList; }}
 
         public Table()
         {

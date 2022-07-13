@@ -12,16 +12,14 @@ namespace Yatzy
 {
     public partial class YatsyForm : Form
     {
-        Table table = new Table();
-        Player player = new Player();
+        public readonly Table table = new Table();
+        readonly Player player = new Player();
 
         public YatsyForm()
         {
             InitializeComponent();
-            table.players.Add(player);
-            Canvas canvas = new Canvas();
-            canvas.PaintCanvas(this);
-
+            table.Join(player);
+            table.SetTableIn(this, table);
         }
 
 

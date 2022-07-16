@@ -68,7 +68,6 @@
     <Compile Include="Outcomes\TwoPairs.cs" />
     <Compile Include="Outcomes\Twos.cs" />
     <Compile Include="Outcomes\Villa.cs" />
-    <Compile Include="State.cs" />
     <Compile Include="YatsyForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,6 +90,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

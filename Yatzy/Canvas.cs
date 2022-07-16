@@ -14,8 +14,8 @@ namespace Yatzy
         private readonly string outcomeFileName = "YatzyProtokoll.jpg";
         private readonly string kolumnFileName = "YatzyKolumn.jpg";
         public readonly List<PictureBox> DieBoxes = new List<PictureBox>();
-        private readonly List<string> diePics = new List<string>(){"1.jpg", "2.jpg", "3.jpg", "4.jpg" , "5.jpg", "6.jpg" };
-        public readonly List<CheckBox> CheckList = new List<CheckBox>();
+        private readonly List<string> diePics = new List<string>() { "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg" };
+        public readonly List<CheckBox> checkList = new List<CheckBox>();
         private List<Player> sortedPlayerList;
 
         public Canvas()
@@ -94,7 +94,7 @@ namespace Yatzy
                     Visible = true,
                     TabStop = false
                 };
-                
+
                 tb.Click += new System.EventHandler(this.SetPoints);
                 form.Controls.Add(tb);
                 player.rows.Add(tb);
@@ -128,18 +128,19 @@ namespace Yatzy
                 CheckBox cb = new CheckBox
                 {
                     Size = new Size(100, 100),
-                    Location = new Point(point.X - 175 , point.Y)
+                    Location = new Point(point.X - 175, point.Y),
+                    TabIndex = i,
+                    Visible = false,
                 };
-                cb.Show();
                 form.Controls.Add(cb);
-                CheckList.Add(cb);
+                checkList.Add(cb);
                 point.Y += 160;
 
                 Button btn = new Button
                 {
-                    Size = new Size(100,100),
+                    Size = new Size(100, 100),
                     Location = new Point(225 + 216 * ps.Count - 1, 500),
-                    Text = "Kasta de markerade tärningarna"
+                    Text = "Kasta tärningarna"
                 };
                 btn.Click += ThrowDieEvent;
                 form.Controls.Add(btn);
@@ -149,10 +150,36 @@ namespace Yatzy
         public void ThrowDieEvent(object sender, EventArgs e)
         {
             Player activePlayer = sortedPlayerList[0];
-            new Player().ThrowDiesFor(6, activePlayer);
-            for (int i = 0; i < activePlayer.savedDice.Count; i++)
+            int amountOfDiceToThrow = 0;
+            
+
+            if (activePlayer.savedDice.Count < 6)
             {
-                SetPictureForDie(i, activePlayer.savedDice[i]);
+                foreach (CheckBox checkBox in checkList)
+                {
+                    checkBox.Visible = true;
+                }
+                amountOfDiceToThrow = 6;
+            }
+            else
+            {
+                int counter = 5;
+                foreach (int die in activePlayer.savedDice.ToList())
+                {
+
+                    if (checkList[counter].Checked)
+                    {
+                        activePlayer.savedDice.RemoveAt(counter);
+                        amountOfDiceToThrow++;
+                    }
+                    counter--;
+                }
+            }
+
+            new Player().ThrowDiesFor(activePlayer, amountOfDiceToThrow);
+            for (int index = 0; 6 > index; index++)
+            {
+                SetPictureForDie(index, activePlayer.savedDice[index]);
             }
         }
 

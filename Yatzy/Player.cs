@@ -12,8 +12,6 @@ namespace Yatzy
     {
         public List<TextBox> rows = new List<TextBox>(); //20 st
         public List<int> savedDice = new List<int>();
-        public List<int> dicardedDice = new List<int>();
-        public State state = new State(StateType.Waiting);
         public int playerId = 1;
         private static int _nextId = 1;
 
@@ -22,17 +20,15 @@ namespace Yatzy
             playerId = _nextId++;
         }
 
-        public void ThrowDiesFor(int dieCount, Player player)
+        public void ThrowDiesFor(Player player, int dieCount)
         {
-            List<int> dice = new List<int>();
             Random r = new Random();
             for (int i = 0; i < dieCount; i++)
             {
                 int die = r.Next(1,7);
-                dice.Add(die);
+                player.savedDice.Add(die);
             }
-
-            player.savedDice = dice;
+            player.savedDice.Sort();
         }
     }
 }

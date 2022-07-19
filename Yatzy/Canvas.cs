@@ -48,7 +48,7 @@ namespace Yatzy
             pictureBox.Show();
             form.Controls.Add(pictureBox);
             int x = pictureBox.Size.Width;
-            foreach (Player player in players)
+            for (int i = 0; i < players.Count; i++)
             {
                 point.X += x;
                 PictureBox pictureBox1 = new PictureBox
@@ -62,7 +62,7 @@ namespace Yatzy
                 pictureBox1.Show();
                 form.Controls.Add(pictureBox1);
 
-                for (int i = 0; i < 13; i++)
+                for (int j = 0; j < 13; j++)
                 {
 
                     TextBox textBox = new TextBox
@@ -176,19 +176,40 @@ namespace Yatzy
                 }
             }
 
+            if (amountOfDiceToThrow == 0)
+            {
+                MessageBox.Show("You can not throw zero die");
+                return;
+            }
+
             new Player().ThrowDiesFor(activePlayer, amountOfDiceToThrow);
             for (int index = 0; 6 > index; index++)
             {
                 SetPictureForDie(index, activePlayer.savedDice[index]);
             }
+
+            ShowPointsOnBoardFor(activePlayer);
         }
 
+        private void ShowPointsOnBoardFor(Player p)
+        {
+            Table table = new Table();
+            List<int> points = table.GetAllValuesFor(p.savedDice);
 
-
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (p.rows[i].Enabled)
+                {
+                    p.rows[i].Text = points[i].ToString();
+                }
+            }
+        }
 
         public void SetPictureForDie(int index, int dienum)
         {
             DieBoxes[index].Image = Image.FromFile(diePics[dienum - 1]);
         }
+
+
     }
 }

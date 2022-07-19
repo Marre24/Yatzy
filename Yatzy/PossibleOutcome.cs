@@ -8,12 +8,7 @@ namespace Yatzy
 {
     public class PossibleOutcome
     {
-        public virtual bool AchievesRequirement(List<int> dice)
-        {
-
-
-            return false;
-        }
+        
 
         public virtual int GetValue(List<int> dice)
         {

@@ -12,6 +12,12 @@ namespace Yatzy
 
         public virtual int GetValue(List<int> dice)
         {
+            //    public override int GetValue(List<int> dice)
+            //{
+            //    int value = 0;
+            //    
+            //    return value;
+            //}
 
             return 0;
         }

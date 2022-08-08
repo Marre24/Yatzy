@@ -24,10 +24,8 @@ namespace Yatzy
             table.Join(player2);
             table.Join(player3);
             table.SetTableIn(this, table);
+            player.StartTurnFor(player);
         }
-
-
-
 
 
         private Size oldSize;

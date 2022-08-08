@@ -32,9 +32,9 @@ namespace Yatzy
 
         public void MoveSecondPlayerToFirst(Table t)
         {
-            var player = sortedPlayerList[1];
-            t.SortedPlayerList.RemoveAt(1);
-            t.SortedPlayerList.Insert(0, player);
+            Player player = sortedPlayerList.First();
+            t.SortedPlayerList.RemoveAt(0);
+            t.SortedPlayerList.Insert(t.SortedPlayerList.Count, player);
         }
 
         readonly List<Func<List<int>, int>> getValueFuncs = new List<Func<List<int>, int>>();

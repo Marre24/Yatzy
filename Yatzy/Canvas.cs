@@ -87,14 +87,13 @@ namespace Yatzy
 
                 TextBox tb = new TextBox()
                 {
-                    Size = new Size(202, 100),
+                    Size = new Size(190, 100),
                     Location = p,
                     Text = "0",
                     Font = new Font(new FontFamily("Arial"), 21, FontStyle.Regular, GraphicsUnit.Pixel),
                     Enabled = false,
-                    ReadOnly = true,
                     Visible = true,
-                    TabStop = false
+                    TabStop = false,
                 };
 
                 tb.Click += new System.EventHandler(this.TextBoxOnClick);
@@ -106,12 +105,14 @@ namespace Yatzy
 
             TextBox tbx = new TextBox()
             {
-                Size = new Size(202, 100),
+                Size = new Size(100, 100),
                 Location = new Point(p.X, 8),
                 Font = new Font(new FontFamily("Arial"), 22, FontStyle.Bold, GraphicsUnit.Pixel),
-                Enabled = false,
                 Name = "PlayerName",
                 Text = player.name,
+                ReadOnly = false,
+                ForeColor = Color.Red,
+                TabStop = false,
             };
             form.Controls.Add(tbx);
             player.mscTextBoxes.Add(tbx);
@@ -123,7 +124,7 @@ namespace Yatzy
                     y = 962;
                 TextBox textBox = new TextBox()
                 {
-                    Size = new Size(202, 100),
+                    Size = new Size(190, 100),
                     Location = new Point(p.X, y),
                     Font = new Font(new FontFamily("Arial"), 22, FontStyle.Bold, GraphicsUnit.Pixel),
                     Enabled = false,
@@ -137,7 +138,7 @@ namespace Yatzy
 
                 TextBox t = new TextBox()
                 {
-                    Size = new Size(202, 100),
+                    Size = new Size(190, 100),
                     Location = new Point(p.X, 374),
                     Font = new Font(new FontFamily("Arial"), 22, FontStyle.Bold, GraphicsUnit.Pixel),
                     Enabled = false,
@@ -154,12 +155,16 @@ namespace Yatzy
         public void TextBoxOnClick(object sender, EventArgs e)
         {
             var tb = (TextBox)sender;
-            tb.Enabled = false;
             tb.Name = "Confirmed";
-            Player activePlayer = tempTable.SortedPlayerList[0];
-            activePlayer.EndTurn(activePlayer);
+            tb.ForeColor = Color.Red;
+            tb.Enabled = false;
+
+            Player activePlayer = tempTable.SortedPlayerList.First();
+            activePlayer.EndTurnFor(activePlayer);
             tempTable.MoveSecondPlayerToFirst(tempTable);
 
+            activePlayer = tempTable.SortedPlayerList.First();
+            activePlayer.StartTurnFor(activePlayer);
         }
 
         public void DieSetup(Form form)

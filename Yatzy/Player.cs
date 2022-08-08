@@ -27,7 +27,7 @@ namespace Yatzy
             Random r = new Random();
             for (int i = 0; i < dieCount; i++)
             {
-                int die = r.Next(1,7);
+                int die = r.Next(1, 7);
                 player.savedDice.Add(die);
             }
             player.savedDice.Sort();
@@ -74,10 +74,10 @@ namespace Yatzy
             }
 
             activePlayer.ThrowDiesFor(activePlayer, amountOfDiceToThrow);
-            
+
         }
 
-        public void EndTurn(Player p)
+        public void EndTurnFor(Player p)
         {
             foreach (TextBox textBox in p.mscTextBoxes)
             {
@@ -110,6 +110,12 @@ namespace Yatzy
                     }
                 }
 
+                if (textBox.Name == "PlayerName")
+                {
+                    textBox.ForeColor = Color.Red;
+                }
+
+
             }
 
             p.savedDice.Clear();
@@ -119,11 +125,26 @@ namespace Yatzy
                 tb.Enabled = false;
             }
 
+
+        }
+
+        public void StartTurnFor(Player p)
+        {
+            foreach (TextBox textBox1 in p.mscTextBoxes)
+            {
+                if (textBox1.Name == "PlayerName")
+                {
+                    textBox1.ForeColor = Color.Green;
+                }
+            }
+
             foreach (TextBox textBox in p.points)
             {
                 if (!(textBox.Name == "Confirmed"))
                     textBox.Enabled = true;
             }
+
+
         }
     }
 }

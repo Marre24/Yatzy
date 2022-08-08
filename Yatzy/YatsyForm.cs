@@ -14,11 +14,15 @@ namespace Yatzy
     {
         public readonly Table table = new Table();
         readonly Player player = new Player();
+        readonly Player player2 = new Player();
+        readonly Player player3 = new Player();
 
         public YatsyForm()
         {
             InitializeComponent();
             table.Join(player);
+            table.Join(player2);
+            table.Join(player3);
             table.SetTableIn(this, table);
         }
 

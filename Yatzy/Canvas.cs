@@ -11,46 +11,46 @@ namespace Yatzy
 {
     public class Canvas
     {
-        private readonly string outcomeFileName = "YatzyProtokoll.jpg";
+        private readonly string protokollFileName = "YatzyProtokoll.jpg";
         private readonly string kolumnFileName = "YatzyKolumn.jpg";
-        public readonly List<PictureBox> DieBoxes = new List<PictureBox>();
+        private readonly List<PictureBox> DieBoxes = new List<PictureBox>();
         private readonly List<string> diePics = new List<string>() { "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg" };
-        public readonly List<CheckBox> checkList = new List<CheckBox>();
-        private List<Player> sortedPlayerList;
+        private readonly List<CheckBox> checkList = new List<CheckBox>();
+        private Table tempTable;
 
         public Canvas()
         {
 
         }
-        public void CanvasSetUp(Form form, List<Player> players, Table table)
+        public void CanvasSetUp(Form form, Table table)
         {
+            tempTable = table;
 
-            sortedPlayerList = table.SortedPlayerList;
-            foreach (Player player in players)
+            foreach (Player player in tempTable.SortedPlayerList)
             {
                 SetRowsFor(player, form);
             }
-            PaintCanvas(form, players);
-            DieSetup(form, players);
+            PaintCanvas(form);
+            DieSetup(form);
         }
 
-        public void PaintCanvas(Form form, List<Player> players)
+        public void PaintCanvas(Form form)
         {
             Point point = new Point(0, 0);
             PictureBox pictureBox = new PictureBox
             {
-                Size = new Size(216, 1000),
+                Size = new Size(200, 1000),
                 Location = point,
-                Image = Image.FromFile(outcomeFileName),
+                Image = Image.FromFile(protokollFileName),
                 SizeMode = PictureBoxSizeMode.StretchImage
 
             };
             pictureBox.Show();
             form.Controls.Add(pictureBox);
             int x = pictureBox.Size.Width;
-            for (int i = 0; i < players.Count; i++)
+            for (int i = 1; i < tempTable.SortedPlayerList.Count + 1; i++)
             {
-                point.X += x;
+                point.X = x * i;
                 PictureBox pictureBox1 = new PictureBox
                 {
                     Size = new Size(216, 1000),
@@ -74,42 +74,95 @@ namespace Yatzy
                 }
             }
         }
+
         public void SetRowsFor(Player player, Form form)
         {
-            Point p = new Point(218 * player.playerId, 90);
+            Point p = new Point(207 + 207 * (player.playerId - 1), 95);
             for (int i = 0; i < 20; i++)
             {
                 if (i == 6)
                 {
-                    p.Y += 87;
+                    p.Y += 84;
                 }
 
                 TextBox tb = new TextBox()
                 {
-                    Size = new Size(200, 100),
+                    Size = new Size(202, 100),
                     Location = p,
-                    Text = "Testing heheheh",
-                    Font = new Font(new FontFamily("Arial"), 20, FontStyle.Regular, GraphicsUnit.Pixel),
+                    Text = "0",
+                    Font = new Font(new FontFamily("Arial"), 21, FontStyle.Regular, GraphicsUnit.Pixel),
+                    Enabled = false,
                     ReadOnly = true,
                     Visible = true,
                     TabStop = false
                 };
 
-                tb.Click += new System.EventHandler(this.SetPoints);
+                tb.Click += new System.EventHandler(this.TextBoxOnClick);
                 form.Controls.Add(tb);
-                player.rows.Add(tb);
+                player.points.Add(tb);
 
                 p.Y += 39;
             }
+
+            TextBox tbx = new TextBox()
+            {
+                Size = new Size(202, 100),
+                Location = new Point(p.X, 8),
+                Font = new Font(new FontFamily("Arial"), 22, FontStyle.Bold, GraphicsUnit.Pixel),
+                Enabled = false,
+                Name = "PlayerName",
+                Text = player.name,
+            };
+            form.Controls.Add(tbx);
+            player.mscTextBoxes.Add(tbx);
+
+            for (int j = 1; j < 3; j++)
+            {
+                int y = 332;
+                if (j == 2)
+                    y = 962;
+                TextBox textBox = new TextBox()
+                {
+                    Size = new Size(202, 100),
+                    Location = new Point(p.X, y),
+                    Font = new Font(new FontFamily("Arial"), 22, FontStyle.Bold, GraphicsUnit.Pixel),
+                    Enabled = false,
+                    TabStop = false,
+                    Name = $"Sum{j}",
+                    Text = "0",
+                };
+                form.Controls.Add(textBox);
+                textBox.BringToFront();
+                player.mscTextBoxes.Add(textBox);
+
+                TextBox t = new TextBox()
+                {
+                    Size = new Size(202, 100),
+                    Location = new Point(p.X, 374),
+                    Font = new Font(new FontFamily("Arial"), 22, FontStyle.Bold, GraphicsUnit.Pixel),
+                    Enabled = false,
+                    Name = "Bonus",
+                    Text = "0",
+                };
+                form.Controls.Add(t);
+                t.BringToFront();
+                player.mscTextBoxes.Add(t);
+
+            }
         }
 
-        public void SetPoints(object sender, EventArgs e)
+        public void TextBoxOnClick(object sender, EventArgs e)
         {
             var tb = (TextBox)sender;
             tb.Enabled = false;
+            tb.Name = "Confirmed";
+            Player activePlayer = tempTable.SortedPlayerList[0];
+            activePlayer.EndTurn(activePlayer);
+            tempTable.MoveSecondPlayerToFirst(tempTable);
+
         }
 
-        public void DieSetup(Form form, List<Player> ps)
+        public void DieSetup(Form form)
         {
             Point point = new Point(1770, 0);
             for (int i = 0; i < 6; i++)
@@ -118,7 +171,7 @@ namespace Yatzy
                 {
                     Size = new Size(150, 150),
                     Location = point,
-                    Image = Image.FromFile(outcomeFileName),
+                    Image = Image.FromFile(protokollFileName),
                     SizeMode = PictureBoxSizeMode.StretchImage
 
                 };
@@ -139,68 +192,40 @@ namespace Yatzy
                 Button btn = new Button
                 {
                     Size = new Size(100, 100),
-                    Location = new Point(225 + 216 * ps.Count - 1, 500),
+                    Location = new Point(225 + 216 * tempTable.SortedPlayerList.Count - 1, 500),
                     Text = "Kasta tärningarna"
                 };
-                btn.Click += ThrowDieEvent;
+                btn.Click += Btn_Click_Event;
                 form.Controls.Add(btn);
             }
         }
 
-        public void ThrowDieEvent(object sender, EventArgs e)
+        public void Btn_Click_Event(object sender, EventArgs e)
         {
-            Player activePlayer = sortedPlayerList[0];
-            int amountOfDiceToThrow = 0;
-            
+            Player activePlayer = tempTable.SortedPlayerList[0];
 
-            if (activePlayer.savedDice.Count < 6)
-            {
-                foreach (CheckBox checkBox in checkList)
-                {
-                    checkBox.Visible = true;
-                }
-                amountOfDiceToThrow = 6;
-            }
-            else
-            {
-                int counter = 5;
-                foreach (int die in activePlayer.savedDice.ToList())
-                {
+            activePlayer.ThrowDieEvent(activePlayer, checkList);
 
-                    if (checkList[counter].Checked)
-                    {
-                        activePlayer.savedDice.RemoveAt(counter);
-                        amountOfDiceToThrow++;
-                    }
-                    counter--;
-                }
-            }
-
-            if (amountOfDiceToThrow == 0)
+            int index = 0;
+            foreach (int die in activePlayer.savedDice)
             {
-                MessageBox.Show("You can not throw zero die");
-                return;
-            }
-
-            new Player().ThrowDiesFor(activePlayer, amountOfDiceToThrow);
-            for (int index = 0; 6 > index; index++)
-            {
-                SetPictureForDie(index, activePlayer.savedDice[index]);
+                SetPictureForDie(index, die);
+                index++;
             }
 
             ShowPointsOnBoardFor(activePlayer);
         }
 
-        private void ShowPointsOnBoardFor(Player p)
+        private static void ShowPointsOnBoardFor(Player p)
         {
             Table table = new Table();
             List<int> points = table.GetAllValuesFor(p.savedDice);
 
             for (int i = 0; i < points.Count; i++)
             {
-                if (p.rows[i].Enabled)
+                if (p.points[i].Enabled)
                 {
-                    p.rows[i].Text = points[i].ToString();
+                    p.points[i].Text = points[i].ToString();
                 }
             }
         }

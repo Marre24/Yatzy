@@ -22,7 +22,7 @@ namespace Yatzy
 
         public void SetTableIn(Form form, Table table)
         {
-            canvas.CanvasSetUp(form, sortedPlayerList, table);
+            canvas.CanvasSetUp(form, table);
         }
 
         internal void Join(Player player)
@@ -30,11 +30,11 @@ namespace Yatzy
             sortedPlayerList.Add(player);
         }
 
-        private void MoveSecondPlayerToFirst()
+        public void MoveSecondPlayerToFirst(Table t)
         {
             var player = sortedPlayerList[1];
-            sortedPlayerList.RemoveAt(1);
-            sortedPlayerList.Insert(0, player);
+            t.SortedPlayerList.RemoveAt(1);
+            t.SortedPlayerList.Insert(0, player);
         }
 
         readonly List<Func<List<int>, int>> getValueFuncs = new List<Func<List<int>, int>>();

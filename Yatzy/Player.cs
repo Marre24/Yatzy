@@ -17,6 +17,8 @@ namespace Yatzy
         private static int _nextId = 1;
         public string name = $"Bert{_nextId}";
 
+        public int remainingThrows = 3;
+
         public Player()
         {
             playerId = _nextId++;
@@ -77,9 +79,9 @@ namespace Yatzy
 
         }
 
-        public void EndTurnFor(Player p)
+        public void EndTurn()
         {
-            foreach (TextBox textBox in p.mscTextBoxes)
+            foreach (TextBox textBox in this.mscTextBoxes)
             {
                 int temp = 0;
 
@@ -87,9 +89,9 @@ namespace Yatzy
                 {
                     for (int i = 0; i < 6; i++)
                     {
-                        if (p.points[i].Enabled == false)
+                        if (this.points[i].Enabled == false)
                         {
-                            temp += int.Parse(p.points[i].Text);
+                            temp += int.Parse(this.points[i].Text);
                         }
                     }
                     textBox.Text = temp.ToString();
@@ -99,14 +101,17 @@ namespace Yatzy
 
                 if (textBox.Name == "Sum2")
                 {
-                    foreach (TextBox textBox1 in p.points)
+                    foreach (TextBox textBox1 in this.points)
                     {
                         if (textBox1.Enabled == false)
                         {
                             temp += int.Parse(textBox1.Text);
                         }
+                        else
+                        {
+                            textBox1.Text = "0";
+                        }
                         textBox.Text = temp.ToString();
-
                     }
                 }
 
@@ -118,18 +123,19 @@ namespace Yatzy
 
             }
 
-            p.savedDice.Clear();
+            this.savedDice.Clear();
 
-            foreach (TextBox tb in p.points)
+            foreach (TextBox tb in this.points)
             {
                 tb.Enabled = false;
             }
 
-
+            remainingThrows = 3;
         }
 
         public void StartTurnFor(Player p)
         {
+            remainingThrows = 3;
             foreach (TextBox textBox1 in p.mscTextBoxes)
             {
                 if (textBox1.Name == "PlayerName")

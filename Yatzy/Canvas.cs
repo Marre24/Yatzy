@@ -156,15 +156,14 @@ namespace Yatzy
         {
             var tb = (TextBox)sender;
             tb.Name = "Confirmed";
-            tb.ForeColor = Color.Red;
             tb.Enabled = false;
 
             Player activePlayer = tempTable.SortedPlayerList.First();
-            activePlayer.EndTurnFor(activePlayer);
+            activePlayer.EndTurn();
             tempTable.MoveSecondPlayerToFirst(tempTable);
 
             activePlayer = tempTable.SortedPlayerList.First();
-            activePlayer.StartTurnFor(activePlayer);
+            activePlayer.EndTurn();
         }
 
         public void DieSetup(Form form)
@@ -209,6 +208,14 @@ namespace Yatzy
         {
             Player activePlayer = tempTable.SortedPlayerList[0];
 
+            if (activePlayer.remainingThrows == 0)
+            {
+                MessageBox.Show("No remaining throws");
+                return;
+            }
+            activePlayer.remainingThrows--;
+
+
             activePlayer.ThrowDieEvent(activePlayer, checkList);
 
             int index = 0;
@@ -217,8 +224,8 @@ namespace Yatzy
                 SetPictureForDie(index, die);
                 index++;
             }
-
             ShowPointsOnBoardFor(activePlayer);
+
         }
 
         private static void ShowPointsOnBoardFor(Player p)

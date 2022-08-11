@@ -163,7 +163,7 @@ namespace Yatzy
             tempTable.MoveSecondPlayerToFirst(tempTable);
 
             activePlayer = tempTable.SortedPlayerList.First();
-            activePlayer.EndTurn();
+            activePlayer.StartTurn();
         }
 
         public void DieSetup(Form form)
@@ -197,7 +197,8 @@ namespace Yatzy
                 {
                     Size = new Size(100, 100),
                     Location = new Point(225 + 216 * tempTable.SortedPlayerList.Count - 1, 500),
-                    Text = "Kasta tärningarna"
+                    Text = "Kasta tärningarna",
+                    TabStop = false,
                 };
                 btn.Click += Btn_Click_Event;
                 form.Controls.Add(btn);

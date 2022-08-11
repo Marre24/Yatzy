@@ -21,15 +21,17 @@ namespace Yatzy
         {
             InitializeComponent();
             table.Join(player);
-            table.Join(player2);
-            table.Join(player3);
+            //table.Join(player2);
+            //table.Join(player3);
             table.SetTableIn(this, table);
-            player.StartTurnFor(player);
+            player.StartTurn();
+            BackColor = Color.DarkGray;
+            Text = "Maxi-Yatzy";
         }
 
 
         private Size oldSize;
-        private void Log_inForm_Load(object sender, EventArgs e) => oldSize = base.Size;
+        private void YatsyForm_Load(object sender, EventArgs e) => oldSize = base.Size;
 
         protected override void OnResize(System.EventArgs e)
         {

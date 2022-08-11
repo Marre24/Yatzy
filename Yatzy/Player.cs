@@ -13,10 +13,24 @@ namespace Yatzy
         public List<TextBox> points = new List<TextBox>(); //20 st
         public List<TextBox> mscTextBoxes = new List<TextBox>();
         public List<int> savedDice = new List<int>();
+
+        public TextBox BonusTextBox
+        { 
+            get 
+            {
+                foreach (TextBox textBox in mscTextBoxes)
+                {
+                    if (textBox.Name == "Bonus")
+                        return textBox;
+                }
+                return null;
+            }
+            set { return; }
+        } 
+
         public int playerId = 1;
         private static int _nextId = 1;
         public string name = $"Bert{_nextId}";
-
         public int remainingThrows = 3;
 
         public Player()
@@ -81,60 +95,78 @@ namespace Yatzy
 
         public void EndTurn()
         {
+            int bonus = 0;
+            (int sum1, int sum2) = CalcSums();
+
             foreach (TextBox textBox in this.mscTextBoxes)
             {
-                int temp = 0;
 
                 if (textBox.Name == "Sum1")
                 {
-                    for (int i = 0; i < 6; i++)
-                    {
-                        if (this.points[i].Enabled == false)
-                        {
-                            temp += int.Parse(this.points[i].Text);
-                        }
-                    }
-                    textBox.Text = temp.ToString();
+                    textBox.Text = sum1.ToString();
                 }
 
-                temp = 0;
+                if (textBox.Name == "Bonus" && sum1 >= 84)
+                {
+                    bonus = 100;
+                    textBox.Text = $"{bonus}";
+                }
 
                 if (textBox.Name == "Sum2")
                 {
-                    foreach (TextBox textBox1 in this.points)
-                    {
-                        if (textBox1.Enabled == false)
-                        {
-                            temp += int.Parse(textBox1.Text);
-                        }
-                        else
-                        {
-                            textBox1.Text = "0";
-                        }
-                        textBox.Text = temp.ToString();
-                    }
+                    textBox.Text = (bonus + sum2).ToString();
                 }
+
+                
 
                 if (textBox.Name == "PlayerName")
                 {
                     textBox.ForeColor = Color.Red;
                 }
-
-
             }
 
-            this.savedDice.Clear();
 
             foreach (TextBox tb in this.points)
             {
                 tb.Enabled = false;
             }
+            
+            this.savedDice.Clear();
 
             remainingThrows = 3;
         }
 
-        public void StartTurnFor(Player p)
+        private (int sum1, int sum2) CalcSums()
         {
+            int sum1 = 0;
+            int sum2 = 0;
+
+            for (int i = 0; i < 6; i++)
+            {
+                if (this.points[i].Enabled == false)
+                {
+                    sum1 += int.Parse(this.points[i].Text);
+                }
+            }
+
+            foreach (TextBox textBox1 in this.points)
+            {
+                if (textBox1.Enabled == false)
+                {
+                    sum2 += int.Parse(textBox1.Text);
+                }
+                else
+                {
+                    textBox1.Text = "0";
+                }
+            }
+
+            return (sum1, sum2);
+        }
+
+        public void StartTurn()
+        {
+            Player p = this;
             remainingThrows = 3;
             foreach (TextBox textBox1 in p.mscTextBoxes)
             {

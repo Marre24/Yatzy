@@ -29,7 +29,46 @@ namespace Yatzy
                 return null;
             }
             set { return; }
-        } 
+        }
+        public TextBox Sum1TextBox
+        {
+            get
+            {
+                foreach (TextBox textBox in mscTextBoxes)
+                {
+                    if (textBox.Name == "Sum1")
+                        return textBox;
+                }
+                return null;
+            }
+            set { return; }
+        }
+        public TextBox Sum2TextBox
+        {
+            get
+            {
+                foreach (TextBox textBox in mscTextBoxes)
+                {
+                    if (textBox.Name == "Sum2")
+                        return textBox;
+                }
+                return null;
+            }
+            set { return; }
+        }
+        public TextBox PlayerNameTextBox
+        {
+            get
+            {
+                foreach (TextBox textBox in mscTextBoxes)
+                {
+                    if (textBox.Name == "PlayerName")
+                        return textBox;
+                }
+                return null;
+            }
+            set { return; }
+        }
 
         public int playerId = 1;
         private static int _nextId = 1;
@@ -123,41 +162,25 @@ namespace Yatzy
         {
             int bonus = 0;
             (int sum1, int sum2) = CalcSums();
+            
+            Sum1TextBox.Text = sum1.ToString();
+            PlayerNameTextBox.ForeColor = Color.Red;
 
-            foreach (TextBox textBox in this.mscTextBoxes)
+            if (sum1 >= 84)
             {
+                bonus = 100;
+                BonusTextBox.Text = $"{bonus}";
 
-                if (textBox.Name == "Sum1")
-                {
-                    textBox.Text = sum1.ToString();
-                }
-
-                if (textBox.Name == "Bonus" && sum1 >= 84)
-                {
-                    bonus = 100;
-                    textBox.Text = $"{bonus}";
-                }
-
-                if (textBox.Name == "Sum2")
-                {
-                    textBox.Text = (bonus + sum2).ToString();
-                }
-
-                
-
-                if (textBox.Name == "PlayerName")
-                {
-                    textBox.ForeColor = Color.Red;
-                }
             }
 
+            Sum2TextBox.Text = (bonus + sum2).ToString();
 
-            foreach (TextBox tb in this.points)
+            foreach (TextBox tb in points)
             {
                 tb.Enabled = false;
             }
             
-            this.savedDice.Clear();
+            savedDice.Clear();
 
             remainingThrows = 3;
         }

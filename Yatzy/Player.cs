@@ -6,6 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
+
+
 namespace Yatzy
 {
     public class Player
@@ -47,6 +50,29 @@ namespace Yatzy
                 player.savedDice.Add(die);
             }
             player.savedDice.Sort();
+        }
+
+        public void SetPoints(List<string> data)
+        {
+            if (data.Count != points.Count)
+                throw new Exception("Ivnalid data length");
+
+            for (int i = 0; i < points.Count;i++)
+            {
+                points[i].Text = data[i];
+                if(data[i] != "0")
+                {
+                    points[i].Name = "Confirmed";
+                    points[i].Enabled = false;
+                }
+            }
+        }
+
+        public void UpdatePointsFromDatabase()
+        {
+            var response = YatsyForm.firebaseClient.Get("board/" + playerId.ToString());
+            var data = response.ResultAs<List<string>>();
+            SetPoints(data);
         }
 
         public void ThrowDieEvent(Player activePlayer, List<CheckBox> checkList)
@@ -149,6 +175,7 @@ namespace Yatzy
                 }
             }
 
+            int index = 0;
             foreach (TextBox textBox1 in this.points)
             {
                 if (textBox1.Enabled == false)
@@ -159,6 +186,9 @@ namespace Yatzy
                 {
                     textBox1.Text = "0";
                 }
+
+                YatsyForm.firebaseClient.Set("board/" +  playerId +"/" + index.ToString(), textBox1.Text);
+                index++;
             }
 
             return (sum1, sum2);

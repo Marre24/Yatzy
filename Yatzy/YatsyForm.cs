@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using FireSharp.Config;
+using FireSharp;
 namespace Yatzy
 {
     public partial class YatsyForm : Form
@@ -17,13 +19,42 @@ namespace Yatzy
         readonly Player player2 = new Player();
         readonly Player player3 = new Player();
 
+        public static FireSharp.FirebaseClient firebaseClient;
         public YatsyForm()
         {
             InitializeComponent();
+
+
+            var config = new FirebaseConfig
+            {
+                AuthSecret = "kRXrNBhkUeuCs2AhSpTyhYcshczcg993GJEhFqYh",
+                BasePath = "https://maxi-yatzy-maxi-default-rtdb.europe-west1.firebasedatabase.app/"
+            };
+
+            var client = new FireSharp.FirebaseClient(config);
+
+            if (client != null)
+            {
+                MessageBox.Show("Connected");
+            }
+            else
+            {
+                MessageBox.Show("Could not connect to ");
+            }
+            firebaseClient = client;
+
             table.Join(player);
-            //table.Join(player2);
+            table.Join(player2);
+
+
+
+            
+
             //table.Join(player3);
             table.SetTableIn(this, table);
+
+            player.UpdatePointsFromDatabase();
+
             player.StartTurn();
             BackColor = Color.DarkGray;
             Text = "Maxi-Yatzy";

@@ -17,6 +17,7 @@ namespace Yatzy
         private readonly List<string> diePics = new List<string>() { "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg" };
         private readonly List<CheckBox> checkList = new List<CheckBox>();
         private Table tempTable;
+        Form tempYatzyForm;
 
         public Canvas()
         {
@@ -26,133 +27,159 @@ namespace Yatzy
         {
             tempTable = table;
 
-            foreach (Player player in tempTable.SortedPlayerList)
-            {
-                SetRowsFor(player, form);
-            }
+
             PaintCanvas(form);
             DieSetup(form);
         }
 
         public void PaintCanvas(Form form)
         {
-            Point point = new Point(0, 0);
+            tempYatzyForm = form;
             PictureBox pictureBox = new PictureBox
             {
                 Size = new Size(200, 1000),
-                Location = point,
+                Location = new Point(0, 0),
                 Image = Image.FromFile(protokollFileName),
                 SizeMode = PictureBoxSizeMode.StretchImage
-
             };
             pictureBox.Show();
-            form.Controls.Add(pictureBox);
-            int x = pictureBox.Size.Width;
-            for (int i = 1; i < tempTable.SortedPlayerList.Count + 1; i++)
+            tempYatzyForm.Controls.Add(pictureBox);
+
+            int i;
+            Point btnLocation = new Point(200, 0);
+            for (i = 0; i < 5; i++)                                 //Creates join buttons
             {
-                point.X = x * i;
-                PictureBox pictureBox1 = new PictureBox
+                Button joinButton = new Button()
                 {
-                    Size = new Size(216, 1000),
-                    Location = point,
-                    Image = Image.FromFile(kolumnFileName),
-                    SizeMode = PictureBoxSizeMode.StretchImage
-
+                    Location = btnLocation,
+                    Size = new Size(216, 40),
+                    Text = "Join Game",
+                    ForeColor = Color.White,
                 };
-                pictureBox1.Show();
-                form.Controls.Add(pictureBox1);
 
-                for (int j = 0; j < 13; j++)
-                {
-
-                    TextBox textBox = new TextBox
-                    {
-                        Size = new Size(216, 1000),
-                        Location = point
-                    };
-                    point.X = textBox.Width;
-                }
+                tempYatzyForm.Controls.Add(joinButton);
+                joinButton.Click += new System.EventHandler(PlayerJoinEvent);
+                btnLocation.X += joinButton.Size.Width;
             }
+
+            Button btn = new Button
+            {
+                Size = new Size(100, 100),
+                Location = new Point(225 + 216 * i, 500),
+                Text = "Kasta tärningarna",
+                TabStop = false,
+                ForeColor = Color.White,
+            };
+            btn.Click += Btn_Click_Event;
+            tempYatzyForm.Controls.Add(btn);
         }
 
-        public void SetRowsFor(Player player, Form form)
+        private void PlayerJoinEvent(object sender, EventArgs e)
         {
-            Point p = new Point(207 + 207 * (player.playerId - 1), 95);
+            Button btn = (Button)sender;
+            btn.Hide();
+            Player player = new Player();
+            tempTable.Join(player);
+            SetRowFor(player, btn.Location.X);
+        }
+
+        public void SetRowFor(Player player, int senderXLocation)
+        {
+            PictureBox pictureBox1 = new PictureBox
+            {
+                Size = new Size(216, 1015),
+                Location = new Point(senderXLocation, 0),
+                Image = Image.FromFile(kolumnFileName),
+                SizeMode = PictureBoxSizeMode.StretchImage,
+            };
+            pictureBox1.Show();
+            tempYatzyForm.Controls.Add(pictureBox1);
+
+            int increment = 40;
+            Point point = new Point(senderXLocation + 10, 95);
             for (int i = 0; i < 20; i++)
             {
-                if (i == 6)
-                {
-                    p.Y += 84;
-                }
+                if (i == 6)                 //jumps to bottom part of kolumn
+                    point.Y += 83;
 
-                TextBox tb = new TextBox()
+                if (i == 13)
+                    increment = 39;
+
+                TextBox pointsTextBox = new TextBox()
                 {
                     Size = new Size(190, 100),
-                    Location = p,
+                    Location = point,
                     Text = "0",
                     Font = new Font(new FontFamily("Arial"), 21, FontStyle.Regular, GraphicsUnit.Pixel),
                     Enabled = false,
-                    Visible = true,
                     TabStop = false,
                 };
 
-                tb.Click += new System.EventHandler(this.TextBoxOnClick);
-                form.Controls.Add(tb);
-                player.points.Add(tb);
+                pointsTextBox.Click += new System.EventHandler(PointsTextBoxOnClick);
+                tempYatzyForm.Controls.Add(pointsTextBox);
+                player.points.Add(pointsTextBox);
+                pointsTextBox.BringToFront();
 
-                p.Y += 39;
+                point.Y += increment;
             }
 
-            TextBox tbx = new TextBox()
+            for (int i = 0; i < 4; i++)
             {
-                Size = new Size(100, 100),
-                Location = new Point(p.X, 8),
-                Font = new Font(new FontFamily("Arial"), 22, FontStyle.Bold, GraphicsUnit.Pixel),
-                Name = "PlayerName",
-                Text = player.name,
-                ReadOnly = false,
-                ForeColor = Color.Red,
-                TabStop = false,
-            };
-            form.Controls.Add(tbx);
-            player.mscTextBoxes.Add(tbx);
-
-            for (int j = 1; j < 3; j++)
-            {
-                int y = 332;
-                if (j == 2)
-                    y = 962;
-                TextBox textBox = new TextBox()
-                {
-                    Size = new Size(190, 100),
-                    Location = new Point(p.X, y),
-                    Font = new Font(new FontFamily("Arial"), 22, FontStyle.Bold, GraphicsUnit.Pixel),
-                    Enabled = false,
-                    TabStop = false,
-                    Name = $"Sum{j}",
-                    Text = "0",
-                };
-                form.Controls.Add(textBox);
-                textBox.BringToFront();
-                player.mscTextBoxes.Add(textBox);
-
-                TextBox t = new TextBox()
-                {
-                    Size = new Size(190, 100),
-                    Location = new Point(p.X, 374),
-                    Font = new Font(new FontFamily("Arial"), 22, FontStyle.Bold, GraphicsUnit.Pixel),
-                    Enabled = false,
-                    Name = "Bonus",
-                    Text = "0",
-                };
-                form.Controls.Add(t);
-                t.BringToFront();
-                player.mscTextBoxes.Add(t);
-
+                TextBox mscTextBox = CreateMscTextBox(i, senderXLocation + 10, player.name);
+                tempYatzyForm.Controls.Add(mscTextBox);
+                player.mscTextBoxes.Add(mscTextBox);
+                mscTextBox.BringToFront();
             }
         }
 
-        public void TextBoxOnClick(object sender, EventArgs e)
+        private TextBox CreateMscTextBox(int i, int xPosition, string playerName)
+        {
+            string name = string.Empty;
+            int yPosition = 0;
+            string text = string.Empty;
+            bool enabled = false;
+
+            switch (i)
+            {
+                case 0:
+                    name = "PlayerName";
+                    yPosition = 8;
+                    text = playerName;
+                    enabled = true;
+                    break;
+
+                case 1:
+                    name = $"Sum{i}";
+                    yPosition = 337;
+                    text = "0";
+                    enabled = false;
+                    break;
+                case 2:
+                    name = $"Sum{i}";
+                    yPosition = 976;
+                    text = "0";
+                    break;
+                case 3:
+                    name = "Bonus";
+                    yPosition = 379;
+                    text = "0";
+                    break;
+            }
+            TextBox mscTextBox = new TextBox()
+            {
+                Size = new Size(190, 100),
+                Location = new Point(xPosition, yPosition),
+                Font = new Font(new FontFamily("Arial"), 22, FontStyle.Bold, GraphicsUnit.Pixel),
+                Name = name,
+                Enabled = enabled,
+                Text = text,
+                ForeColor = Color.Red,
+                TabStop = false,
+            };
+            return mscTextBox;
+        }
+
+        public void PointsTextBoxOnClick(object sender, EventArgs e)
         {
             var tb = (TextBox)sender;
             tb.Name = "Confirmed";
@@ -193,15 +220,7 @@ namespace Yatzy
                 checkList.Add(cb);
                 point.Y += 160;
 
-                Button btn = new Button
-                {
-                    Size = new Size(100, 100),
-                    Location = new Point(225 + 216 * tempTable.SortedPlayerList.Count - 1, 500),
-                    Text = "Kasta tärningarna",
-                    TabStop = false,
-                };
-                btn.Click += Btn_Click_Event;
-                form.Controls.Add(btn);
+
             }
         }
 
@@ -247,7 +266,5 @@ namespace Yatzy
         {
             DieBoxes[index].Image = Image.FromFile(diePics[dienum - 1]);
         }
-
-
     }
 }

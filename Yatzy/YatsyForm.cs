@@ -15,9 +15,6 @@ namespace Yatzy
     public partial class YatsyForm : Form
     {
         public readonly Table table = new Table();
-        readonly Player player = new Player();
-        readonly Player player2 = new Player();
-        readonly Player player3 = new Player();
 
         public static FireSharp.FirebaseClient firebaseClient;
         public YatsyForm()
@@ -42,20 +39,11 @@ namespace Yatzy
                 MessageBox.Show("Could not connect to ");
             }
             firebaseClient = client;
-
-            table.Join(player);
-            table.Join(player2);
-
-
-
             
-
-            //table.Join(player3);
             table.SetTableIn(this, table);
 
-            player.UpdatePointsFromDatabase();
+            //player.UpdatePointsFromDatabase();
 
-            player.StartTurn();
             BackColor = Color.DarkGray;
             Text = "Maxi-Yatzy";
         }

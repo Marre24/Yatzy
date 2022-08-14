@@ -202,6 +202,16 @@ namespace Yatzy
                 };
                 btn.Click += Btn_Click_Event;
                 form.Controls.Add(btn);
+
+                Button reset = new Button
+                {
+                    Size = new Size(100, 100),
+                    Location = new Point(225 + 216 * tempTable.SortedPlayerList.Count - 1, 750),
+                    Text = "Reset Board",
+                    TabStop = false,
+                };
+                //reset.Click += Btn_Click_Event;
+                form.Controls.Add(reset);
             }
         }
 

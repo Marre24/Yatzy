@@ -15,25 +15,21 @@ namespace Yatzy
     public partial class YatsyForm : Form
     {
         public readonly Table table = new Table();
+
+
+        public List<Player> playerList = new List<Player>();
+
         readonly Player player = new Player();
         readonly Player player2 = new Player();
         readonly Player player3 = new Player();
 
-        public static FireSharp.FirebaseClient firebaseClient;
         public YatsyForm()
         {
             InitializeComponent();
 
+            
 
-            var config = new FirebaseConfig
-            {
-                AuthSecret = "kRXrNBhkUeuCs2AhSpTyhYcshczcg993GJEhFqYh",
-                BasePath = "https://maxi-yatzy-maxi-default-rtdb.europe-west1.firebasedatabase.app/"
-            };
-
-            var client = new FireSharp.FirebaseClient(config);
-
-            if (client != null)
+            if (Connection.Setup())
             {
                 MessageBox.Show("Connected");
             }
@@ -41,7 +37,6 @@ namespace Yatzy
             {
                 MessageBox.Show("Could not connect to ");
             }
-            firebaseClient = client;
 
             table.Join(player);
             table.Join(player2);

@@ -16,21 +16,13 @@ namespace Yatzy
     {
         public readonly Table table = new Table();
 
-        public static FireSharp.FirebaseClient firebaseClient;
         public YatsyForm()
         {
             InitializeComponent();
 
+            
 
-            var config = new FirebaseConfig
-            {
-                AuthSecret = "kRXrNBhkUeuCs2AhSpTyhYcshczcg993GJEhFqYh",
-                BasePath = "https://maxi-yatzy-maxi-default-rtdb.europe-west1.firebasedatabase.app/"
-            };
-
-            var client = new FireSharp.FirebaseClient(config);
-
-            if (client != null)
+            if (Connection.Setup())
             {
                 MessageBox.Show("Connected");
             }

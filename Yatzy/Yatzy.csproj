@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Canvas.cs" />
+    <Compile Include="Connection.cs" />
     <Compile Include="Outcomes\Chance.cs" />
     <Compile Include="Outcomes\FiveOfAKind.cs" />
     <Compile Include="Outcomes\Fives.cs" />

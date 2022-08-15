@@ -30,7 +30,6 @@ namespace Yatzy
             {
                 MessageBox.Show("Could not connect to ");
             }
-            firebaseClient = client;
             
             table.SetTableIn(this, table);
 

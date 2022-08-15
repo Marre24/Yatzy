@@ -13,6 +13,7 @@ namespace Yatzy
     {
         private readonly string protokollFileName = "YatzyProtokoll.jpg";
         private readonly string kolumnFileName = "YatzyKolumn.jpg";
+        private readonly string EmptyDieImageFileName = "Empty.jpg";
         private readonly List<PictureBox> DieBoxes = new List<PictureBox>();
         private readonly List<string> diePics = new List<string>() { "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg" };
         private readonly List<CheckBox> checkList = new List<CheckBox>();
@@ -186,11 +187,11 @@ namespace Yatzy
             tb.Enabled = false;
 
             Player activePlayer = tempTable.SortedPlayerList.First();
-            activePlayer.EndTurn();
+            activePlayer.EndTurn(checkList, DieBoxes);
             tempTable.MoveSecondPlayerToFirst(tempTable);
 
             activePlayer = tempTable.SortedPlayerList.First();
-            activePlayer.StartTurn();
+            activePlayer.StartTurn(checkList);
         }
 
         public void DieSetup(Form form)
@@ -202,7 +203,7 @@ namespace Yatzy
                 {
                     Size = new Size(150, 150),
                     Location = point,
-                    Image = Image.FromFile(protokollFileName),
+                    Image = Image.FromFile(EmptyDieImageFileName),
                     SizeMode = PictureBoxSizeMode.StretchImage
 
                 };

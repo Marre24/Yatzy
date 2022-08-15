@@ -109,9 +109,9 @@ namespace Yatzy
 
         public void UpdatePointsFromDatabase()
         {
-            var response = YatsyForm.firebaseClient.Get("board/" + playerId.ToString());
-            var data = response.ResultAs<List<string>>();
-            SetPoints(data);
+            //var response = YatsyForm.firebaseClient.Get("board/" + playerId.ToString());                                          fix
+            //var data = response.ResultAs<List<string>>();
+            //SetPoints(data);
         }
 
         public void ThrowDieEvent(Player activePlayer, List<CheckBox> checkList)
@@ -158,8 +158,13 @@ namespace Yatzy
 
         }
 
-        public void EndTurn()
+        public void EndTurn(List<CheckBox> checkList, List<PictureBox> dicePictures)
         {
+            foreach (CheckBox checkBox in checkList)
+                checkBox.Hide();
+            foreach (PictureBox pictureBox in dicePictures)
+                pictureBox.Image = Image.FromFile("Empty.jpg");
+
             int bonus = 0;
             (int sum1, int sum2) = CalcSums();
             
@@ -210,18 +215,20 @@ namespace Yatzy
                     textBox1.Text = "0";
                 }
 
-                YatsyForm.firebaseClient.Set("board/" +  playerId +"/" + index.ToString(), textBox1.Text);
+                //YatsyForm.firebaseClient.Set("board/" +  playerId +"/" + index.ToString(), textBox1.Text);                    fix
                 index++;
             }
 
             return (sum1, sum2);
         }
 
-        public void StartTurn()
+        public void StartTurn(List<CheckBox> checkList)
         {
-            Player p = this;
+            foreach (CheckBox checkBox in checkList)
+                checkBox.Show();
+
             remainingThrows = 3;
-            foreach (TextBox textBox1 in p.mscTextBoxes)
+            foreach (TextBox textBox1 in mscTextBoxes)
             {
                 if (textBox1.Name == "PlayerName")
                 {
@@ -229,13 +236,11 @@ namespace Yatzy
                 }
             }
 
-            foreach (TextBox textBox in p.points)
+            foreach (TextBox textBox in points)
             {
                 if (!(textBox.Name == "Confirmed"))
                     textBox.Enabled = true;
             }
-
-
         }
     }
 }

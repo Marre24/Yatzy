@@ -88,6 +88,21 @@ namespace Yatzy
             getValueFuncs.Add(maxi_Yatzy.GetValue);
         }
 
+        internal void StartGame(List<Button> buttonList, Button throwDiceBtn)
+        {
+            if (SortedPlayerList.Count <= 0)
+            {
+                MessageBox.Show("You can not start the game with 0 players");
+                return;
+            }
+            foreach (Button button in buttonList)
+            {
+                button.Hide();
+            }
+            throwDiceBtn.Show();
+            SortedPlayerList.First().StartTurn();
+        }
+
         public List<int> GetAllValuesFor(List<int> dice)
         {
             List<int> pointsForTheseDice = new List<int>();
@@ -98,5 +113,24 @@ namespace Yatzy
             return pointsForTheseDice;
         }
 
+        internal bool IsGameOver()
+        {
+            foreach (Player player in sortedPlayerList)
+            {
+                foreach (var item in player.points)
+                {
+                    if (item.Name != "Confirmed")
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        internal void RemovePlayerFromList(Player player)
+        {
+            sortedPlayerList.Remove(player);
+        }
     }
 }

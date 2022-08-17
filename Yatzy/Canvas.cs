@@ -19,6 +19,10 @@ namespace Yatzy
         private readonly List<CheckBox> checkList = new List<CheckBox>();
         private Table tempTable;
         Form tempYatzyForm;
+        Button throwDiceBtn;
+        private Button endGameBtn;
+        readonly List<Button> buttonList = new List<Button>();
+        readonly string startControllName = "Start controll";
 
         public Canvas()
         {
@@ -41,7 +45,8 @@ namespace Yatzy
                 Size = new Size(200, 1000),
                 Location = new Point(0, 0),
                 Image = Image.FromFile(protokollFileName),
-                SizeMode = PictureBoxSizeMode.StretchImage
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                Name = startControllName,
             };
             pictureBox.Show();
             tempYatzyForm.Controls.Add(pictureBox);
@@ -56,26 +61,62 @@ namespace Yatzy
                     Size = new Size(216, 40),
                     Text = "Join Game",
                     ForeColor = Color.White,
+                    Name = startControllName,
                 };
-
+                buttonList.Add(joinButton);
                 tempYatzyForm.Controls.Add(joinButton);
-                joinButton.Click += new System.EventHandler(PlayerJoinEvent);
+                joinButton.Click += new System.EventHandler(Player_Join_Event);
                 btnLocation.X += joinButton.Size.Width;
             }
 
-            Button btn = new Button
+            Button throwBtn = new Button
             {
                 Size = new Size(100, 100),
-                Location = new Point(225 + 216 * i, 500),
+                Location = new Point(1400, 500),
                 Text = "Kasta tärningarna",
                 TabStop = false,
                 ForeColor = Color.White,
+                Visible = false,
             };
-            btn.Click += Btn_Click_Event;
-            tempYatzyForm.Controls.Add(btn);
+            throwBtn.Click += Throw_Dice_Event;
+            tempYatzyForm.Controls.Add(throwBtn);
+            throwDiceBtn = throwBtn;
+
+            Button StartGameBtn = new Button
+            {
+                Size = new Size(100, 100),
+                Location = new Point(1400, 500),
+                Text = "StartGame",
+                TabStop = false,
+                ForeColor = Color.White,
+                Visible = true,
+                Name = startControllName,
+            };
+            StartGameBtn.Click += StartGame;
+            tempYatzyForm.Controls.Add(StartGameBtn);
+
+
+            Button EndGameBtn = new Button
+            {
+                Size = new Size(100, 100),
+                Location = new Point(1400, 900),
+                Text = "Start Over",
+                TabStop = false,
+                ForeColor = Color.White,
+                Visible = false,
+            };
+            EndGameBtn.Click += StartOver;
+            tempYatzyForm.Controls.Add(EndGameBtn);
+            endGameBtn = EndGameBtn;
         }
 
-        private void PlayerJoinEvent(object sender, EventArgs e)
+        public void StartGame(object sender, EventArgs e)
+        {
+            tempTable.StartGame(buttonList, throwDiceBtn);
+            endGameBtn.Show();
+        }
+
+        private void Player_Join_Event(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
             btn.Hide();
@@ -116,7 +157,7 @@ namespace Yatzy
                     TabStop = false,
                 };
 
-                pointsTextBox.Click += new System.EventHandler(PointsTextBoxOnClick);
+                pointsTextBox.Click += TextBox_OnClick_SetPoints;
                 tempYatzyForm.Controls.Add(pointsTextBox);
                 player.points.Add(pointsTextBox);
                 pointsTextBox.BringToFront();
@@ -180,7 +221,7 @@ namespace Yatzy
             return mscTextBox;
         }
 
-        public void PointsTextBoxOnClick(object sender, EventArgs e)
+        public void TextBox_OnClick_SetPoints(object sender, EventArgs e)
         {
             var tb = (TextBox)sender;
             tb.Name = "Confirmed";
@@ -190,9 +231,47 @@ namespace Yatzy
             activePlayer.EndTurn(checkList, DieBoxes);
             tempTable.MoveSecondPlayerToFirst(tempTable);
 
+            if (tempTable.IsGameOver())
+            {
+                StartOver(sender, e);
+                return;
+            }
+
             activePlayer = tempTable.SortedPlayerList.First();
-            activePlayer.StartTurn(checkList);
+            activePlayer.StartTurn();
         }
+
+        private void StartOver(object sender, EventArgs e)
+        {
+            Player winner = new Player();
+            int points = 0;
+
+            foreach (Player player in tempTable.SortedPlayerList.ToList())
+            {
+                if (int.Parse(player.Sum2TextBox.Text) > points)
+                {
+                    winner = player;
+                    points = int.Parse(player.Sum2TextBox.Text);
+                }
+
+                tempTable.RemovePlayerFromList(player);
+            }
+
+            MessageBox.Show($"The winner is {winner.PlayerNameTextBox.Text} with {points} points");
+
+            foreach (Control item in tempYatzyForm.Controls)
+            {
+                if (item.Name != startControllName)
+                {
+                    item.Hide();
+                }
+                else
+                {
+                    item.Show();
+                }
+            }
+        }
+
 
         public void DieSetup(Form form)
         {
@@ -204,8 +283,8 @@ namespace Yatzy
                     Size = new Size(150, 150),
                     Location = point,
                     Image = Image.FromFile(EmptyDieImageFileName),
-                    SizeMode = PictureBoxSizeMode.StretchImage
-
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    Name = startControllName,
                 };
                 pictureBox.Show();
                 form.Controls.Add(pictureBox);
@@ -225,7 +304,7 @@ namespace Yatzy
             }
         }
 
-        public void Btn_Click_Event(object sender, EventArgs e)
+        public void Throw_Dice_Event(object sender, EventArgs e)
         {
             Player activePlayer = tempTable.SortedPlayerList[0];
 

@@ -161,7 +161,10 @@ namespace Yatzy
         public void EndTurn(List<CheckBox> checkList, List<PictureBox> dicePictures)
         {
             foreach (CheckBox checkBox in checkList)
+            {
                 checkBox.Hide();
+                checkBox.Checked = false;
+            }
             foreach (PictureBox pictureBox in dicePictures)
                 pictureBox.Image = Image.FromFile("Empty.jpg");
 
@@ -184,10 +187,11 @@ namespace Yatzy
             {
                 tb.Enabled = false;
             }
-            
             savedDice.Clear();
 
             remainingThrows = 3;
+
+
         }
 
         private (int sum1, int sum2) CalcSums()
@@ -222,11 +226,8 @@ namespace Yatzy
             return (sum1, sum2);
         }
 
-        public void StartTurn(List<CheckBox> checkList)
+        public void StartTurn()
         {
-            foreach (CheckBox checkBox in checkList)
-                checkBox.Show();
-
             remainingThrows = 3;
             foreach (TextBox textBox1 in mscTextBoxes)
             {
